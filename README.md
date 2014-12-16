@@ -1,5 +1,6 @@
 # Seiso::ImportChef
 
+[![Gem Version](https://badge.fury.io/rb/seiso-import_chef.svg)](http://badge.fury.io/rb/seiso-import_chef)
 [![Build Status](https://travis-ci.org/ExpediaDotCom/seiso-import_chef.svg)](https://travis-ci.org/ExpediaDotCom/seiso-import_chef)
 [![Inline docs](http://inch-ci.org/github/ExpediaDotCom/seiso-import_chef.svg?branch=master)](http://inch-ci.org/github/ExpediaDotCom/seiso-import_chef)
 
