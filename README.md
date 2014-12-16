@@ -1,5 +1,8 @@
 # Seiso::ImportChef
 
+[![Build Status](https://travis-ci.org/ExpediaDotCom/seiso-import_chef.svg)](https://travis-ci.org/ExpediaDotCom/seiso-import_chef)
+[![Inline docs](http://inch-ci.org/github/ExpediaDotCom/seiso-import_chef.svg?branch=master)](http://inch-ci.org/github/ExpediaDotCom/seiso-import_chef)
+
 Imports Chef data into Seiso.
 
 ## Installation
