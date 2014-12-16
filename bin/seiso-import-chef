@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'seiso/import_chef'
+require 'yaml'
+
+# Imports Chef Server nodes into Seiso as machines.
+#
+# Author:: Willie Wheeler (mailto:wwheeler@expedia.com)
+# Copyright:: Copyright (c) 2014-2015 Expedia, Inc.
+# License:: Apache 2.0
+
+chef_settings = YAML.load_file "#{Dir.home}/.seiso-importers/chef.yml"
+seiso_settings = YAML.load_file "#{Dir.home}/.seiso-importers/seiso.yml"
+importer = Seiso::ImportChef.new(chef_settings, seiso_settings)
+importer.import_all
