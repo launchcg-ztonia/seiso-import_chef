@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/ExpediaDotCom/seiso-import_chef.svg)](https://travis-ci.org/ExpediaDotCom/seiso-import_chef)
 [![Inline docs](http://inch-ci.org/github/ExpediaDotCom/seiso-import_chef.svg?branch=master)](http://inch-ci.org/github/ExpediaDotCom/seiso-import_chef)
 
-Imports Chef data into Seiso.
+Imports Chef data into Seiso. See [Integrate Chef Server Data Using Seiso](http://seiso.io/guides/integrate-chef-server-data-using-seiso/) for more details.
 
 ## Installation
 
@@ -34,4 +34,4 @@ Or install it yourself as:
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+5. Create a new pull request.
