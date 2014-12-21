@@ -8,7 +8,7 @@ require "seiso/import_chef/chef_machine_mapper"
 class TestChefMachineMapper < MiniTest::Unit::TestCase
 
   def setup
-    @mapper = Seiso::ChefMachineMapper.new
+    @mapper = Seiso::ImportChef::ChefMachineMapper.new
     @chef_node = {
       "fqdn" => "my-fqdn",
       "hostname" => "my-hostname",

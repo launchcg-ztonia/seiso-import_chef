@@ -11,7 +11,6 @@ module Seiso
   # Author:: Willie Wheeler (mailto:wwheeler@expedia.com)
   # Copyright:: Copyright (c) 2014-2015 Expedia, Inc.
   # License:: Apache 2.0
-  
   class ImportChef
     
     # Batch size for putting nodes into Seiso.
@@ -23,7 +22,7 @@ module Seiso
         "#{chef_settings['client_name']}",
         "#{chef_settings['signing_key']}")
       @seiso = Seiso::Connector.new seiso_settings
-      @mapper = Seiso::ChefMachineMapper.new
+      @mapper = Seiso::ImportChef::ChefMachineMapper.new
     end
 
     # Imports all nodes from the Chef server into Seiso.
