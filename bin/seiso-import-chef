@@ -43,4 +43,4 @@ chef_settings = YAML.load_file(options[:chef_settings_path])
 seiso_settings = YAML.load_file(options[:seiso_settings_path])
 
 importer = Seiso::ImportChef.new(chef_settings, seiso_settings)
-#importer.import_all
+importer.import_all
