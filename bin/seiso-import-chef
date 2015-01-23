@@ -2,16 +2,45 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'optparse'
 require 'seiso/import_chef'
 require 'yaml'
 
 # Imports Chef Server nodes into Seiso as machines.
 #
-# Author:: Willie Wheeler (mailto:wwheeler@expedia.com)
+# Author:: Willie Wheeler
 # Copyright:: Copyright (c) 2014-2015 Expedia, Inc.
 # License:: Apache 2.0
 
-chef_settings = YAML.load_file "#{Dir.home}/.seiso-importers/chef.yml"
-seiso_settings = YAML.load_file "#{Dir.home}/.seiso-importers/seiso.yml"
+options = {}
+option_parser = OptionParser.new do |opts|
+  executable_name = File.basename $PROGRAM_NAME
+  opts.banner = "Import Chef server nodes into Seiso as machines.
+
+Usage: #{executable_name} [options]"
+  options[:chef_settings_path] = "#{Dir.home}/.seiso-importers/chef.yml"
+  opts.on("--chef CHEF_SETTINGS_PATH", "Path to Chef server settings file") do |path|
+    options[:chef_settings_path] = path
+  end
+  
+  options[:seiso_settings_path] = "#{Dir.home}/.seiso-importers/seiso.yml"
+  opts.on("--seiso SEISO_SETTINGS_PATH", "Path to Seiso API settings file") do |path|
+    options[:seiso_settings_path] = path
+  end
+
+  opts.on("-h", "--help", "Display this screen") do
+    puts opts
+    exit
+  end
+end
+
+option_parser.parse!
+
+puts ("Using: #{options[:chef_settings_path]}")
+puts ("Using: #{options[:seiso_settings_path]}")
+
+chef_settings = YAML.load_file(options[:chef_settings_path])
+seiso_settings = YAML.load_file(options[:seiso_settings_path])
+
 importer = Seiso::ImportChef.new(chef_settings, seiso_settings)
-importer.import_all
+#importer.import_all
