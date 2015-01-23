@@ -1,0 +1,2 @@
+gem build seiso-import_chef.gemspec
+gem install seiso-import_chef-*.gem
