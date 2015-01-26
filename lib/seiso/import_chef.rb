@@ -25,6 +25,10 @@ module Seiso
       @mapper = Seiso::ImportChef::ChefMachineMapper.new
     end
 
+    def seiso
+      @seiso
+    end
+    
     # Imports all nodes from the Chef server into Seiso.
     def import_all
       nodes = @chef.get_rest "/nodes"
@@ -74,7 +78,7 @@ module Seiso
         # surface these as problem nodes too, maybe indicating that the server didn't like them, as opposed to not being able to
         # read them from Chef server.
         puts "Flushing nodes to Seiso"
-        @seiso.put_items('machines', page)
+        seiso.post_items('machines', page)
       end
       
       if problem_nodes.empty?
