@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "seiso-import_chef"
-  spec.version       = "0.0.4"
+  spec.version       = "0.1.0.SNAPSHOT"
   spec.authors       = ["Willie Wheeler"]
   spec.email         = ["wwheeler@expedia.com"]
   spec.summary       = "Imports Chef data into Seiso."
