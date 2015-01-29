@@ -19,12 +19,12 @@ option_parser = OptionParser.new do |opts|
 
 Usage: #{executable_name} [options]"
   options[:chef_settings_path] = "#{Dir.home}/.seiso-importers/chef.yml"
-  opts.on("--chef CHEF_SETTINGS_PATH", "Path to Chef server settings file") do |path|
+  opts.on("--chef=CHEF_SETTINGS_PATH", "Path to Chef server settings file") do |path|
     options[:chef_settings_path] = path
   end
   
   options[:seiso_settings_path] = "#{Dir.home}/.seiso-importers/seiso.yml"
-  opts.on("--seiso SEISO_SETTINGS_PATH", "Path to Seiso API settings file") do |path|
+  opts.on("--seiso=SEISO_SETTINGS_PATH", "Path to Seiso API settings file") do |path|
     options[:seiso_settings_path] = path
   end
 
