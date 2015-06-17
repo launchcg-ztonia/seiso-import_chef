@@ -20,6 +20,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
 
-  spec.add_runtime_dependency "chef", "~> 11.8"
+  spec.add_runtime_dependency "chef", "~> 12"
   spec.add_runtime_dependency "seiso-connector", "~> 0.1"
 end
