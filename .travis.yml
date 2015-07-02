@@ -4,3 +4,4 @@ rvm:
 install:
   - gem uninstall bundler
   - gem install bundler --version '1.10.5'
+  - bundle install
