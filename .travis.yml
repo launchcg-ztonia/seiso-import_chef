@@ -1,7 +1,8 @@
 language: ruby
 rvm:
   - 2.1.4
-install:
+before_install:
   - gem uninstall bundler
   - gem install bundler --version '1.10.5'
-  - bundle install
+#install:
+#  - bundle install
