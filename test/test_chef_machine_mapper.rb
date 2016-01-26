@@ -18,7 +18,8 @@ class TestChefMachineMapper < MiniTest::Unit::TestCase
       "platform" => "aws",
       "platform_version" => "2.0",
       "os" => "linux",
-      "os_version" => "3.0"
+      "os_version" => "3.0",
+      "serial_number" => "CABBAGE"
     }
   end
 
@@ -31,7 +32,7 @@ class TestChefMachineMapper < MiniTest::Unit::TestCase
   def test_map_all_nil
     assert_nil(@mapper.map_all nil)
   end
-  
+
   def test_map_one
     @seiso_machine = @mapper.map_one @chef_node
     assert_equal(@chef_node["fqdn"], @seiso_machine["fqdn"])
@@ -43,6 +44,7 @@ class TestChefMachineMapper < MiniTest::Unit::TestCase
     assert_equal(@chef_node["platform_version"], @seiso_machine["platformVersion"])
     assert_equal(@chef_node["os"], @seiso_machine["os"])
     assert_equal(@chef_node["os_version"], @seiso_machine["osVersion"])
+    assert_equal(@chef_node["serial_number"], @seiso_machine["serialNumber"])
   end
 
   def test_map_one_nil

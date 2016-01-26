@@ -25,7 +25,7 @@ Or install it yourself as:
 ## Usage
 
 1. Create a directory `~/.seiso-importers`
-2. Place appropriately modified copies of `chef.yml.sample` and `seiso.yml.sample` in there.
+2. Place appropriately modified copies of `chef.yml.sample` and `seiso3.yml.sample` in there.
 3. Run `seiso-import-chef` to do the import.
 
 ## Contributing

@@ -3,14 +3,16 @@
 # vi: set ft=ruby :
 
 require 'optparse'
-require 'seiso/import_chef'
 require 'yaml'
+require 'seiso/import_chef'
 
 # Imports Chef Server nodes into Seiso as machines.
 #
 # Author:: Willie Wheeler
-# Copyright:: Copyright (c) 2014-2015 Expedia, Inc.
+# Copyright:: Copyright (c) 2014-2016 Expedia, Inc.
 # License:: Apache 2.0
+
+log = Seiso::ImportChef::Util::Logger.new "seiso-import-chef"
 
 options = {}
 option_parser = OptionParser.new do |opts|
@@ -22,10 +24,10 @@ Usage: #{executable_name} [options]"
   opts.on("--chef=CHEF_SETTINGS_PATH", "Path to Chef server settings file") do |path|
     options[:chef_settings_path] = path
   end
-  
-  options[:seiso_settings_path] = "#{Dir.home}/.seiso-importers/seiso.yml"
-  opts.on("--seiso=SEISO_SETTINGS_PATH", "Path to Seiso API settings file") do |path|
-    options[:seiso_settings_path] = path
+
+  options[:seiso3_settings_path] = "#{Dir.home}/.seiso-importers/seiso3.yml"
+  opts.on("--seiso3=SEISO3_SETTINGS_PATH", "Path to Seiso API v3 settings file") do |path|
+    options[:seiso3_settings_path] = path
   end
 
   opts.on("-h", "--help", "Display this screen") do
@@ -34,13 +36,19 @@ Usage: #{executable_name} [options]"
   end
 end
 
-option_parser.parse!
+begin
+  option_parser.parse!
+rescue OptionParser::InvalidOption => e
+  log.error "Invalid option."
+  puts option_parser.help
+  abort
+end
 
-puts ("Using: #{options[:chef_settings_path]}")
-puts ("Using: #{options[:seiso_settings_path]}")
+log.info "Using: #{options[:chef_settings_path]}"
+log.info "Using: #{options[:seiso3_settings_path]}"
 
 chef_settings = YAML.load_file(options[:chef_settings_path])
-seiso_settings = YAML.load_file(options[:seiso_settings_path])
+seiso3_settings = YAML.load_file(options[:seiso3_settings_path])
 
-importer = Seiso::ImportChef.new(chef_settings, seiso_settings)
+importer = Seiso::ImportChef.new(chef_settings, seiso3_settings)
 importer.import_all
