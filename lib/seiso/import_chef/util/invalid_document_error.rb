@@ -4,6 +4,6 @@
 class Seiso::ImportChef::Util::InvalidDocumentError < StandardError
 
   def initialize(message)
-		super
-	end
+    super
+  end
 end
