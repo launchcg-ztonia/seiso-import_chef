@@ -19,13 +19,10 @@ module Seiso
     
     def self.build(chef_settings, seiso3_settings)
       loaders = {
-        'chef' => ->(chef_settings) {
-          Chef::REST.new(
+        'chef' => Chef::REST.new(
         "#{chef_settings['base_uri']}",
         "#{chef_settings['client_name']}",
         "#{chef_settings['signing_key']}")
-          
-        }
       }
       v3_api = HyperResource.new(
         root: seiso3_settings['base_uri'],
@@ -84,13 +81,11 @@ module Seiso
               next
             end
 
-            machine = @mapper.map_one(node_automatic)
-
             # FIXME Just setting this here for now since I'm not sure which node field the name corresponds to.
             # It's not exactly the FQDN (the case is different).
-            machine['name'] = name
+            node_automatic['name'] = name
             # page << machine
-						import_machine(machine)
+            import_one(node_automatic)
 
           rescue Net::HTTPServerException
             @log.error "Couldn't get #{name}"
@@ -112,24 +107,20 @@ module Seiso
 
     end # method import_all
 
-		def import_machine(machine)
-
-			# FIXME This is not detecting some HTTP 500s that are happening. When this happens, the whole page fails, the
-			# server returns an HTTP 500 (I think, anyway--need to confirm), and this call doesn't catch the error. Somehow
-			# we need to surface these as problem nodes too, maybe indicating that the server didn't like them, as opposed
-			# to not being able to read them from Chef server.
-			@log.info "Importing machine #{machine.name}"
-			loader = @loaders['machines']
-			doc = loader.call(machine)
-			type = doc['type']
-			begin
-				@importers.['machines'].import doc
-				return true
-			rescue Exception => e
-				@log.error "Failed to import machine #{machine.name}: #{e.message}"
-				raise e
-			end
-		end # method import_machine
+    def import_one(doc)
+      # FIXME This is not detecting some HTTP 500s that are happening. When this happens, the whole page fails, the
+      # server returns an HTTP 500 (I think, anyway--need to confirm), and this call doesn't catch the error. Somehow
+      # we need to surface these as problem nodes too, maybe indicating that the server didn't like them, as opposed
+      # to not being able to read them from Chef server.
+      @log.info "Importing machine #{doc.name}"
+      begin
+          @importers.['machines'].import doc
+          return true
+      rescue Exception => e
+        @log.error "Failed to import machine #{doc.name}: #{e.message}"
+          raise e
+      end
+    end # method import_machine
   end # class ImportChef
 
 end # module Seiso

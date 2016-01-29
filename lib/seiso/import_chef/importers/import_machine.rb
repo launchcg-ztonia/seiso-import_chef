@@ -21,20 +21,9 @@ class Seiso::ImportChef
 		end
 
 		def import(doc)
-			@validator.validate.doc
-			doc_nodes = doc['items']
-			mach_name = doc['name'] 
-			mach_proxy = api.machines.search.findByName(:name mach_name)
-			machine = rest_util.get_or_nil(mach_proxy, mach_key)
+			@validator.validate doc
 
-			if machine.nil?
-				raise Util::InvalidDocumentError.new "Machine #{mach_name} not found."
-			end
-
-			seiso_machines = machine.machines.get
-			delete_orphans(doc_nodes, seiso_Machines)
-
-			import_items(doc_nodes, {'machines' => machine})
+			import_items([doc], {'dataCenter' => nil})
 		end
 
 
