@@ -26,9 +26,6 @@ module Seiso
         "#{chef_settings['signing_key']}")
           
         }
-        v3_api = HyperResource.new(
-          root: seiso3_settings['base_uri']
-        )
       }
       v3_api = HyperResource.new(
         root: seiso3_settings['base_uri'],
