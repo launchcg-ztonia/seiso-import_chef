@@ -11,7 +11,7 @@ module Seiso
     class ChefMachineMapper
 
       # Maps a list of Chef nodes to a list of Seiso machines.
-			def map(chef_nodes, context)
+      def map(chef_nodes, context)
         return nil if chef_nodes.nil?
         chef_nodes.map { |n| map_one n }
       end

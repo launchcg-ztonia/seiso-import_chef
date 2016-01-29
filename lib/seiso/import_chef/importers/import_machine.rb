@@ -1,30 +1,30 @@
 class Seiso::ImportChef
-	# Imports a machine document into Seiso
-	#
-	# Each Chef node represents a machine document. This importer compares the 
-	# Seiso machines and will synchronize the machine lists.
+  # Imports a machine document into Seiso
+  #
+  # Each Chef node represents a machine document. This importer compares the 
+  # Seiso machines and will synchronize the machine lists.
 
   # Author:: Willie Wheeler (mailto:wwheeler@expedia.com)
   # Author:: Zaal Tonia (mailto:v-ztonia@expedia.com)
-	# Copyright:: Copyright (c) 2016-2018 Expedia, Inc.
-	# License:: Apache 2.0
+  # Copyright:: Copyright (c) 2016-2018 Expedia, Inc.
+  # License:: Apache 2.0
 
-	class Importers::MachineImporter < Importers::BaseImporter
-		def initialize(api, rest_util, resolver)
-			self.api = api
-			self.rest_util = rest_util
-			self.mapper = Mappers::ChefMachineMapper.new resolver
-			self.repo_resource = api.machines.get
+  class Importers::MachineImporter < Importers::BaseImporter
+    def initialize(api, rest_util, resolver)
+      self.api = api
+      self.rest_util = rest_util
+      self.mapper = Mappers::ChefMachineMapper.new resolver
+      self.repo_resource = api.machines.get
 
-			@validator = Validators::MachineValidator.new
-			@search_resource = api.machines.search.get
-		end
+      @validator = Validators::MachineValidator.new
+      @search_resource = api.machines.search.get
+    end
 
-		def import(doc)
-			@validator.validate doc
+    def import(doc)
+      @validator.validate doc
 
-			import_items([doc], {'dataCenter' => nil})
-		end
+      import_items([doc], {'dataCenter' => nil})
+    end
 
 
     # Can't make these protected, because that prevents BaseImporter from seeing them.
@@ -53,5 +53,5 @@ class Seiso::ImportChef
       end
     end
 
-	end
+  end
 end
