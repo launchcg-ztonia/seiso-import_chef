@@ -17,9 +17,7 @@ class Seiso::ImportChef
 			self.repo_resource = api.machines.get
 
 			@validator = Validators::MachineValidator.new
-			@search_resource = repo_resource.search.get
-
-			@machine_search_resource = api.machines.search.get
+			@search_resource = api.machines.search.get
 		end
 
 		def import(doc)
@@ -51,18 +49,6 @@ class Seiso::ImportChef
     # BaseImporter callback
     def find_resource(search_params)
       @search_resource.findByName(name: search_params['name']).get
-    end
-
-    # BaseImporter callback
-    def context_for(parent_resource, parent_context)
-      {
-        'serviceInstance' => parent_context['serviceInstance'],
-        'node' => parent_resource
-      }
-    end
-
-    # BaseImporter callback
-    def import_children_of(doc_node, context)
     end
 
     private
