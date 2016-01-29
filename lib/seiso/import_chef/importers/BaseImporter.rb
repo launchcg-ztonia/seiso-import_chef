@@ -2,7 +2,7 @@ require 'hyper_resource'
 
 class Seiso::ImportChef
 
-	class Importers::MachineImporter
+	class Importers::BaseImporter
 		def import_items(doc_items, context)
 			doc_items.each { |doc_item| import_item(doc_item, context) }
 		end
