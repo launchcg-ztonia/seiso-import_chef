@@ -50,5 +50,10 @@ log.info "Using: #{options[:seiso3_settings_path]}"
 chef_settings = YAML.load_file(options[:chef_settings_path])
 seiso3_settings = YAML.load_file(options[:seiso3_settings_path])
 
-importer = Seiso::ImportChef.new(chef_settings, seiso3_settings)
-importer.import_all
+importer = Seiso::ImportChef.build(chef_settings, seiso3_settings)
+success = importer.import_all
+if success
+  log.success "Import succeeded."
+else
+  log.error "Import failed."
+end
