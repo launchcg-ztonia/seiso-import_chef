@@ -16,12 +16,43 @@ module Seiso
 
     # Batch size for putting nodes into Seiso.
     PAGE_SIZE = 20
-
-    def initialize(chef_settings, seiso_settings)
-      @chef = Chef::REST.new(
+    
+    def self.build(chef_settings, seiso3_settings)
+      loaders = {
+        'chef' => ->(chef_settings) {
+          Chef::REST.new(
         "#{chef_settings['base_uri']}",
         "#{chef_settings['client_name']}",
         "#{chef_settings['signing_key']}")
+          
+        }
+        v3_api = HyperResource.new(
+          root: seiso3_settings['base_uri']
+        )
+      }
+      v3_api = HyperResource.new(
+        root: seiso3_settings['base_uri'],
+        headers: {
+          'Accept' => 'application/hal+json',
+          'Content-Type' => 'application/hal+json'
+        },
+        auth: {
+          basic: [ seiso3_settings['username'], seiso3_settings['password'] ]
+        }
+      )
+      resolver = Util::ItemResolver.new v3_api
+      rest_util = Util::RestUtil.new
+      importers = {
+        'nodes' => Importers::NodeImporter.new(v3_api, rest_util, resolver),
+        'machines' => Importers::MachineImporter.new(v3_api, rest_util, resolver)
+      }
+
+      new(loaders, importers)
+      
+    end
+
+    def initialize(loaders, importers)
+      @chef = loaders.chef
       @mapper = Seiso::ImportChef::ChefMachineMapper.new
       @log = Util::Logger.new "ImportChef"
     end
@@ -61,7 +92,9 @@ module Seiso
             # FIXME Just setting this here for now since I'm not sure which node field the name corresponds to.
             # It's not exactly the FQDN (the case is different).
             machine['name'] = name
-            page << machine
+            # page << machine
+						import_machine(machine)
+
           rescue Net::HTTPServerException
             @log.error "Couldn't get #{name}"
             problem_nodes << {
@@ -71,12 +104,6 @@ module Seiso
           end
         end
 
-        # FIXME This is not detecting some HTTP 500s that are happening. When this happens, the whole page fails, the
-        # server returns an HTTP 500 (I think, anyway--need to confirm), and this call doesn't catch the error. Somehow
-        # we need to surface these as problem nodes too, maybe indicating that the server didn't like them, as opposed
-        # to not being able to read them from Chef server.
-        @log.info "Flushing nodes to Seiso"
-#        seiso.post_items('machines', page)
       end
 
       if problem_nodes.empty?
@@ -87,5 +114,25 @@ module Seiso
       end
 
     end # method import_all
+
+		def import_machine(machine)
+
+			# FIXME This is not detecting some HTTP 500s that are happening. When this happens, the whole page fails, the
+			# server returns an HTTP 500 (I think, anyway--need to confirm), and this call doesn't catch the error. Somehow
+			# we need to surface these as problem nodes too, maybe indicating that the server didn't like them, as opposed
+			# to not being able to read them from Chef server.
+			@log.info "Importing machine #{machine.name}"
+			loader = @loaders['machines']
+			doc = loader.call(machine)
+			type = doc['type']
+			begin
+				@importers.['machines'].import doc
+				return true
+			rescue Exception => e
+				@log.error "Failed to import machine #{machine.name}: #{e.message}"
+				raise e
+			end
+		end # method import_machine
   end # class ImportChef
+
 end # module Seiso
