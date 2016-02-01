@@ -2,7 +2,8 @@ module Seiso::ImportChef::Validators
   # Author:: Willie Wheeler (mailto:wwheeler@expedia.com)
   # Copyright:: Copyright (c) 2014-2016 Expedia, Inc.
   # License:: Apache 2.0
-  class MachineValidator < BaseValidator
+  class MachineValidator
+    # Raises an InvalidDocumentError with the given message.
 
     def initialize
       @log = Seiso::ImportChef::Util::Logger.new "MachineValidator"
@@ -11,6 +12,10 @@ module Seiso::ImportChef::Validators
     def validate(doc)
 #      @log.info "Validating machines"
       validate_machines doc
+    end
+    
+    def error(msg)
+      fail Util::InvalidDocumentError.new msg
     end
 
     private
