@@ -114,7 +114,7 @@ module Seiso
       # to not being able to read them from Chef server.
       @log.info "Importing machine #{doc.name}"
       begin
-          @importers.['machines'].import doc
+          @importers['machines'].import doc
           return true
       rescue Exception => e
         @log.error "Failed to import machine #{doc.name}: #{e.message}"
