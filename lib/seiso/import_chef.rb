@@ -18,12 +18,10 @@ module Seiso
     PAGE_SIZE = 20
     
     def self.build(chef_settings, seiso3_settings)
-      loaders = {
-        'chef' => Chef::REST.new(
+      loader = Chef::REST.new(
         "#{chef_settings['base_uri']}",
         "#{chef_settings['client_name']}",
         "#{chef_settings['signing_key']}")
-      }
       v3_api = HyperResource.new(
         root: seiso3_settings['base_uri'],
         headers: {
@@ -36,17 +34,15 @@ module Seiso
       )
       resolver = Util::ItemResolver.new v3_api
       rest_util = Util::RestUtil.new
-      importers = {
-        'nodes' => Importers::NodeImporter.new(v3_api, rest_util, resolver),
-        'machines' => Importers::MachineImporter.new(v3_api, rest_util, resolver)
-      }
+      importer = Importers::MachineImporter.new(v3_api, rest_util, resolver)
 
-      new(loaders, importers)
+      new(loader, importer)
       
     end
 
-    def initialize(loaders, importers)
-      @chef = loaders.chef
+    def initialize(loaders, importer)
+      @chef = loaders
+      @importer = importer
       @mapper = Seiso::ImportChef::ChefMachineMapper.new
       @log = Util::Logger.new "ImportChef"
     end
@@ -114,7 +110,7 @@ module Seiso
       # to not being able to read them from Chef server.
       @log.info "Importing machine #{doc.name}"
       begin
-          @importers['machines'].import doc
+        @importer.import doc
           return true
       rescue Exception => e
         @log.error "Failed to import machine #{doc.name}: #{e.message}"

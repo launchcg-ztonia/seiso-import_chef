@@ -1,3 +1,5 @@
+require 'hyper_resource'
+
 class Seiso::ImportChef
   # Imports a machine document into Seiso
   #
@@ -9,7 +11,7 @@ class Seiso::ImportChef
   # Copyright:: Copyright (c) 2016-2018 Expedia, Inc.
   # License:: Apache 2.0
 
-  class Importers::MachineImporter < Importers::BaseImporter
+  class Importers::MachineImporter
     def initialize(api, rest_util, resolver)
       self.api = api
       self.rest_util = rest_util
@@ -19,39 +21,39 @@ class Seiso::ImportChef
       @validator = Validators::MachineValidator.new
       @search_resource = api.machines.search.get
     end
-
-    def import(doc)
+    
+    def import(doc_items)
       @validator.validate doc
-
-      import_items([doc], {'dataCenter' => nil})
+      doc_items.each { |doc_item| import_item(doc_item, context) }
     end
 
+    # Imports a single document item into Seiso.
+    def import_item(doc_item, context)
+      data = mapper.map(doc_item, context)
+      search_params = { 'name' => doc_item['name'] }
 
-    # Can't make these protected, because that prevents BaseImporter from seeing them.
-#    protected
+      begin
+        resource = @search_resource.findByName(name: search_params['name']).get
+        rest_util.put(resource, data, search_params)
+        resource.links.self.href
+      rescue HyperResource::ClientError => e
+        status = e.response.status
+        body = e.response.body
+        fail "Response error: status=#{status}, body=#{body}" unless status == 404
+        # Seiso API returns the created resource in the response body. Capture.
 
-    # BaseImporter callback
-    def to_search_params(doc_node, context)
-      { 'name' => doc_node['name'] }
-    end
+        resource = rest_util.post(repo_resource, data, search_params)
+      end
 
-    # BaseImporter callback
-    def find_resource(search_params)
-      @search_resource.findByName(name: search_params['name']).get
+      resource.href
     end
 
     private
 
-    def delete_orphans(doc_nodes, seiso_nodes)
-      doc_node_names = doc_nodes.map { |doc_node| doc_node['name'] }
-      seiso_nodes.each do |seiso_node|
-        orphan = !doc_node_names.include?(seiso_node.name)
-        if orphan
-          params = { 'name' => seiso_node.name }
-          rest_util.delete(seiso_node, params)
-        end
-      end
-    end
+    attr_accessor :api
+    attr_accessor :rest_util
+    attr_accessor :mapper
+    attr_accessor :repo_resource
 
   end
 end
