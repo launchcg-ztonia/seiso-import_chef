@@ -19,7 +19,11 @@ class TestChefMachineMapper < MiniTest::Unit::TestCase
       "platform_version" => "2.0",
       "os" => "linux",
       "os_version" => "3.0",
-      "serial_number" => "CABBAGE"
+      "kernel" => {
+        "os_info" => {
+          "serial_number" => "CABBAGE"
+        }
+      }
     }
   end
 
