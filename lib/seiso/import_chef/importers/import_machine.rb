@@ -15,23 +15,27 @@ class Seiso::ImportChef
     def initialize(api, rest_util, resolver)
       self.api = api
       self.rest_util = rest_util
-      self.mapper = Mappers::ChefMachineMapper.new resolver
+	  self.mapper = ChefMachineMapper.new
       self.repo_resource = api.machines.get
 
       @validator = Validators::MachineValidator.new
       @search_resource = api.machines.search.get
+      @log = Seiso::ImportChef::Util::Logger.new "MachineImporter" #ztonia
     end
     
     def import(doc_items)
-      @validator.validate doc
-      doc_items.each { |doc_item| import_item(doc_item, context) }
+      @validator.validate doc_items
+      if doc_items.is_a?(Array)
+        return doc_items.each { |doc_item| import_item(doc_item) }
+      else
+        return import_item(doc_items)
+      end
     end
 
     # Imports a single document item into Seiso.
-    def import_item(doc_item, context)
-      data = mapper.map(doc_item, context)
+    def import_item(doc_item)
+      data = mapper.map(doc_item)
       search_params = { 'name' => doc_item['name'] }
-
       begin
         resource = @search_resource.findByName(name: search_params['name']).get
         rest_util.put(resource, data, search_params)

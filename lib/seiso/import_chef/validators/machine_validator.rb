@@ -10,8 +10,12 @@ module Seiso::ImportChef::Validators
     end
 
     def validate(doc)
-#      @log.info "Validating machines"
-      validate_machines doc
+      if doc.is_a?(Array)
+        doc.each { |doc_item| validate_machine(doc_item) }
+      else
+        validate_machine(doc)
+      end
+      
     end
     
     def error(msg)
@@ -20,7 +24,7 @@ module Seiso::ImportChef::Validators
 
     private
 
-    def validate_machines(doc)
+    def validate_machine(doc)
       machine_name = doc['name']
 
       if machine_name.nil?

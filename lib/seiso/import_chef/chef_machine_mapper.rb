@@ -11,17 +11,20 @@ module Seiso
     class ChefMachineMapper
 
       # Maps a list of Chef nodes to a list of Seiso machines.
-      def map(chef_nodes, context)
+      def map(chef_nodes)
         return nil if chef_nodes.nil?
-        chef_nodes.map { |n| map_one n }
+        if chef_nodes.is_a?(Array)
+          return chef_nodes.map { |n| map_one n }
+        else 
+          return map_one chef_nodes
+        end
       end
 
       def map_one(chef_node)
-        ap chef_node
         return nil if chef_node.nil?
         {
           # FIXME Not sure which field Chef uses as the key here, so we'll just set that externally for now.
-          #      "name" => cleanup(chef_node["name"]),
+          "name" => cleanup(chef_node["name"]),
           "fqdn" => cleanup(chef_node["fqdn"]),
           "hostname" => cleanup(chef_node["hostname"]),
           "domain" => cleanup(chef_node["domain"]),
@@ -39,7 +42,7 @@ module Seiso
           "platformVersion" => cleanup(chef_node["platform_version"]),
           "os" => cleanup(chef_node["os"]),
           "osVersion" => cleanup(chef_node["os_version"]),
-          "serialNumber" => cleanup(chef_node["serial_number"])
+          "serialNumber" => cleanup(chef_node["kernel"]["os_info"]["serial_number"])
         }
       end
 
