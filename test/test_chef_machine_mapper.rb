@@ -29,12 +29,12 @@ class TestChefMachineMapper < MiniTest::Unit::TestCase
 
   def test_map_all
     chef_nodes = [ @chef_node ]
-    seiso_machines = @mapper.map_all chef_nodes
+    seiso_machines = @mapper.map chef_nodes
     assert_equal(chef_nodes.length, seiso_machines.length)
   end
 
   def test_map_all_nil
-    assert_nil(@mapper.map_all nil)
+    assert_nil(@mapper.map nil)
   end
 
   def test_map_one
@@ -48,7 +48,7 @@ class TestChefMachineMapper < MiniTest::Unit::TestCase
     assert_equal(@chef_node["platform_version"], @seiso_machine["platformVersion"])
     assert_equal(@chef_node["os"], @seiso_machine["os"])
     assert_equal(@chef_node["os_version"], @seiso_machine["osVersion"])
-    assert_equal(@chef_node["serial_number"], @seiso_machine["serialNumber"])
+    assert_equal(@chef_node["kernel"]["os_info"]["serial_number"].downcase, @seiso_machine["serialNumber"])
   end
 
   def test_map_one_nil
@@ -56,10 +56,10 @@ class TestChefMachineMapper < MiniTest::Unit::TestCase
   end
 
   def test_map_one_cleanup
-    chef_node = {
+    chef_node = @chef_node.merge({
       "fqdn" => "   MY-FQDN   ",
       "ipaddress" => " 1.2.3.4  "
-    }
+    })
     seiso_machine = @mapper.map_one chef_node
     assert_equal("my-fqdn", seiso_machine["fqdn"])
     assert_equal("1.2.3.4", seiso_machine["ipAddress"])
